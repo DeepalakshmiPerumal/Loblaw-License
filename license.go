@@ -144,6 +144,19 @@ func (t *SimpleChaincode) create_entry(stub shim.ChaincodeStubInterface, args []
 	
 	return nil, nil
 }
+//==============================================================================================================================
+//   get license details
+//==============================================================================================================================
+func (t *SimpleChaincode) get_entry(stub shim.ChaincodeStubInterface, key string) ([]byte, error) {
+
+	licentry, err := stub.GetState(key)
+
+	if err != nil { return nil, errors.New("Couldn't retrieve ecert for user " + key) }
+
+	return licentry, nil
+	
+	
+}
 //=================================================================================================================================
 //	Query - Called on chaincode query. Takes a function name passed and calls that function. Passes the
 //  		initial arguments passed are passed on to the called function.
@@ -155,8 +168,14 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 		if err != nil {return nil, errors.New("Received unknown function invocation " + function)}
     	return bytes, nil
 	}
+	if function == "get_entry" {
+		bytes, err := t.get_entry(stub, args[0])
+		if err != nil {return nil, errors.New("Received unknown function invocation " + function)}
+    	return bytes, nil
+	}
 	return nil, nil
 }
+
 //==============================================================================================================================
 //	 Router Functions
 //==============================================================================================================================
